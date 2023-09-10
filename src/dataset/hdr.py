@@ -4,10 +4,12 @@ from typing import List, Tuple
 
 import cv2
 import numpy as np
-from tone_mappers import (BaseTMO, Drago, Durand, Mantiuk, PercentileExposure,
-                          Reinhard)
+from torchvision.transforms import ToTensor
 
 from . import BaseDataset
+from .augmentation import flip, random_rotate
+from .tone_mappers import (BaseTMO, Drago, Durand, Mantiuk, PercentileExposure,
+                           Reinhard)
 
 TMOs = [
     PercentileExposure,
@@ -22,9 +24,10 @@ class HdrDataSample:
     hdr_file: Path
     tmo: BaseTMO
 
-class HdrDataset(BaseDataset):
-    def __init__(self, data_dir: Path, file_formats: List[str]=["hdr", "exr"], **kwargs):
+class PanoHdrDataset(BaseDataset):
+    def __init__(self, data_dir: Path, file_formats: List[str]=["hdr", "exr"], is_training: bool=True, **kwargs):
         super().__init__(**kwargs)
+        self.is_training = is_training
         self.data_dir = data_dir
         self.data_samples: List[HdrDataSample] = []
         for fmt in file_formats:
@@ -36,14 +39,19 @@ class HdrDataset(BaseDataset):
         return len(self.data_samples)
 
     def __getitem__(self, idx: int) -> Tuple[np.ndarray, np.ndarray]:
-        hdr_img_raw = cv2.cvtColor(cv2.imread(
+        hdr_img = cv2.cvtColor(cv2.imread(
             self.data_samples[idx].hdr_file, flags=cv2.IMREAD_ANYDEPTH + cv2.IMREAD_COLOR
         ), cv2.COLOR_BGR2RGB)
-        hdr_img = self.transform(hdr_img_raw)
+        if self.is_training:
+            hdr_img = self.augment(hdr_img)
         ldr_img = self.data_samples[idx].tmo(hdr_img)
-        return hdr_img, ldr_img
+        return ToTensor(hdr_img), ToTensor(ldr_img)
     
-    def transform(self, hdr_img: np.ndarray):
+    def augment(self, hdr_img: np.ndarray):
+        if self.flip and np.random.rand() < 0.5:
+            hdr_img = flip(hdr_img)
+        if self.rotate:
+            hdr_img = random_rotate(hdr_img)
         return hdr_img
 
 
