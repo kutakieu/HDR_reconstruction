@@ -1,0 +1,50 @@
+dataset:
+    train:
+        mode: "train"
+        img_size: [512, 512]
+        aug:
+            flip: True
+            rotate: True
+        loader_args:
+            batch_size: 4
+            num_workers: &num_workers 4
+            shuffle: True
+            drop_last: True
+            pin_memory: True
+    val:
+        mode: "test"
+        img_size: [1024, 512]
+        aug:
+            flip: False
+            rotate: False
+        loader_args:
+            batch_size: 1
+            num_workers: *num_workers
+            shuffle: False
+            drop_last: False
+            pin_memory: True
+    test:
+        mode: "test"
+        img_size: [1024, 512]
+        aug:
+            flip: False
+            rotate: False
+        loader_args:
+            batch_size: 1
+            num_workers: *num_workers
+            shuffle: False
+            drop_last: False
+            pin_memory: True
+model:
+    name: "expandnet"
+training:
+    n_epochs: 300
+    accelerator:
+        device: "gpu"
+        gpus: 1
+    optimizer:
+        name: "adam"
+        learning_rate: 0.0003
+    log_every_n_batch: 5
+    early_stopping_patience: 50
+
