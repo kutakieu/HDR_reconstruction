@@ -1,15 +1,20 @@
-import os
-
 import hydra
+import wandb
 from lightning import pytorch as pl
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
-from omegaconf import DictConfig
+from lightning.pytorch.loggers import WandbLogger
+from omegaconf import DictConfig, OmegaConf
 
+from src import Env
 from src.dataset.hdr import PanoHdrDataset
 from src.lightning_wrapper import LightningWrapper
 
 
-@hydra.main(version_base=None)
+@hydra.main(
+    config_path=Env().config_dir,
+    config_name=Env().config_name,
+    version_base=None,
+)
 def main(cfg: DictConfig):
     train_dataloader = PanoHdrDataset().create_dataloader()
     val_dataloader = PanoHdrDataset().create_dataloader()
@@ -25,6 +30,13 @@ def main(cfg: DictConfig):
         mode="min",
     )
 
+    if Env().wandb_api_key:
+        wandb.login(key=Env().wandb_api_key)
+        wandb_logger = WandbLogger(
+            project=cfg.model.name, 
+            config=OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True)
+            )
+
     trainer = pl.Trainer(
         accelerator=cfg.training.accelerator.device,
         val_check_interval=1.0,
@@ -32,6 +44,7 @@ def main(cfg: DictConfig):
         log_every_n_steps=cfg.training.log_every_n_batch,
         max_epochs=cfg.training.n_epochs,
         callbacks=[early_stop_callback],
+        logger=wandb_logger if Env().wandb_api_key else None,
     )
 
     trainer.fit(
