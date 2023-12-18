@@ -5,6 +5,22 @@ import numpy as np
 from numpy.random import uniform
 
 
+def calibrate_hdr(hdr: np.ndarray, ldr: np.ndarray):
+    """Calibrate HDR image using LDR image
+    Args:
+        hdr (np.ndarray): HDR image
+        ldr (np.ndarray): LDR image
+    Returns:
+        np.ndarray: calibrated HDR image
+    """
+    non_overexposed_mask = _get_non_overexposed_mask(ldr)
+    return hdr * (np.sum(ldr[non_overexposed_mask, :]) / np.sum(hdr[non_overexposed_mask, :]))
+
+def _get_non_overexposed_mask(ldr: np.ndarray, tau: float=0.83):
+    if np.max(ldr) > 1:
+        ldr = ldr / 255.0
+    return np.sum(ldr, axis=2) < tau*3
+
 class BaseToneMapper(ABC):
     def __call__(self, img):
         return self.map_range(self.tonemapper.process(img))
@@ -133,6 +149,11 @@ if __name__ == "__main__":
         cv2.imread(str(hdr_file), flags=cv2.IMREAD_ANYDEPTH + cv2.IMREAD_COLOR), 
         cv2.COLOR_BGR2RGB
         )
+    ldr_img = Reinhard(randomize=False)(hdr_img)
+    
+    calibrated_hdr = calibrate_hdr(hdr_img, ldr_img)
+    calibrate_ldr = Reinhard(randomize=False)(calibrated_hdr)
+    Image.fromarray((255 * calibrate_ldr).astype(np.uint8)).save("ldr_calibrated.png")
 
     for tm_name, tm in TM_DICT.items():
         ldr_img = tm(randomize=False)(hdr_img)
