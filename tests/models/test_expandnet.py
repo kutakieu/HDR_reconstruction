@@ -4,7 +4,7 @@ import cv2
 import pytest
 import torch
 
-from src.models.expandnet import ExpandNet
+from reconsthdr.models.expandnet import ExpandNet
 
 test_data_dir = Path("tests/data")
 

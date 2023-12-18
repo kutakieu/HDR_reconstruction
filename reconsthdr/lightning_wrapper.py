@@ -3,12 +3,12 @@ from typing import Dict
 import numpy as np
 from lightning import pytorch as pl
 
-from src.lossfn_optimizer import optimizer_factory
-from src.metrics import metrics_dict
-from src.models import loss_fn_factory, model_factory
-from src.utils.logger import setup_logger
+from reconsthdr.lossfn_optimizer import optimizer_factory
+from reconsthdr.metrics import metrics_dict
+from reconsthdr.models import loss_fn_factory, model_factory
+from reconsthdr.utils.logger import get_logger
 
-logger = setup_logger(__name__)
+logger = get_logger(__name__)
 
 
 class LightningWrapper(pl.LightningModule):
