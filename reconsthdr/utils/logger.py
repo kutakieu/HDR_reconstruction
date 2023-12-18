@@ -1,7 +1,8 @@
 import json
 import sys
 import traceback
-from logging import DEBUG, INFO, WARNING, Filter, Formatter, StreamHandler, getLogger
+from logging import (DEBUG, INFO, WARNING, Filter, Formatter, StreamHandler,
+                     getLogger)
 
 
 class JsonFormatter(Formatter):
@@ -28,7 +29,7 @@ class LowPassFilter(Filter):
         return record.levelno <= int(INFO)
 
 
-def setup_logger(logger_name: str):
+def get_logger(logger_name: str):
     formatter = JsonFormatter(datefmt="%Y-%m-%d %H:%M:%S")
 
     stdout_stream = StreamHandler(stream=sys.stdout)

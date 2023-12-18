@@ -5,9 +5,9 @@ from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 from lightning.pytorch.loggers import WandbLogger
 from omegaconf import DictConfig, OmegaConf
 
-from src import Env
-from src.dataset.hdr import PanoHdrDataset
-from src.lightning_wrapper import LightningWrapper
+from reconsthdr import Env
+from reconsthdr.dataset.dataset_factory import DatasetFactory
+from reconsthdr.lightning_wrapper import LightningWrapper
 
 
 @hydra.main(
@@ -16,9 +16,10 @@ from src.lightning_wrapper import LightningWrapper
     version_base=None,
 )
 def main(cfg: DictConfig):
-    train_dataloader = PanoHdrDataset().create_dataloader()
-    val_dataloader = PanoHdrDataset().create_dataloader()
-    test_dataloader = PanoHdrDataset().create_dataloader()
+    dataset_factory = DatasetFactory(cfg)
+    train_dataloader = dataset_factory.create_dataset("train").create_dataloader()
+    val_dataloader = dataset_factory.create_dataset("val").create_dataloader()
+    test_dataloader = dataset_factory.create_dataset("test").create_dataloader()
 
     hdr_estimator = LightningWrapper(cfg)
 
