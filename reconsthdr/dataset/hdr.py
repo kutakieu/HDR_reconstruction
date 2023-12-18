@@ -7,11 +7,11 @@ from torchvision.transforms.v2 import Compose, Normalize, ToTensor
 
 from . import BaseDataset
 from .augmentation import apply_hue_jitter, flip, random_rotate
-from .tone_mappers import (BaseTMO, Drago, Durand, Mantiuk, PercentileExposure,
-                           Reinhard)
+from .tone_mappers import (BaseToneMapper, Drago, Durand, Mantiuk,
+                           PercentileExposure, Reinhard)
 from .utils import load_hdr
 
-TMOs = [
+ToneMappers = [
     PercentileExposure,
     Reinhard,
     Mantiuk,
@@ -22,7 +22,7 @@ TMOs = [
 @dataclass
 class HdrDataSample:
     hdr_file: Path
-    tmo: BaseTMO
+    tonemapper: BaseToneMapper
 
 class PanoHdrDataset(BaseDataset):
     def __init__(self, data_dir: Path, file_formats: List[str]=["hdr", "exr"], is_training: bool=True, **kwargs):
@@ -32,8 +32,8 @@ class PanoHdrDataset(BaseDataset):
         self.data_samples: List[HdrDataSample] = []
         for fmt in file_formats:
             for hdr_file in self.data_dir.glob(f"*.{fmt}"):
-                for tmo in TMOs:
-                    self.data_samples.append(HdrDataSample(hdr_file, tmo))
+                for tm in ToneMappers:
+                    self.data_samples.append(HdrDataSample(hdr_file, tm))
 
         self.img_transform = Compose([
             ToTensor(),
@@ -47,7 +47,7 @@ class PanoHdrDataset(BaseDataset):
         hdr_img = load_hdr(self.data_samples[idx].hdr_file)
         if self.is_training:
             hdr_img = self.augment(hdr_img)
-        ldr_img = self.data_samples[idx].tmo(randomize=True)(hdr_img)
+        ldr_img = self.data_samples[idx].tonemapper(randomize=True)(hdr_img)
         return ToTensor(hdr_img), self.img_transform(ldr_img)
     
     def augment(self, hdr_img: np.ndarray):

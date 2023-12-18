@@ -5,7 +5,7 @@ import numpy as np
 from numpy.random import uniform
 
 
-class BaseTM(ABC):
+class BaseToneMapper(ABC):
     def __call__(self, img):
         return self.map_range(self.tonemapper.process(img))
     
@@ -13,7 +13,7 @@ class BaseTM(ABC):
     def map_range(x: np.ndarray, low: float=0, high: float=1):
         return np.interp(x, [x.min(), x.max()], [low, high]).astype(x.dtype)
 
-class Exposure(BaseTM):
+class Exposure(BaseToneMapper):
     def __init__(self, 
                  stops: float=0.0, 
                  gamma: float=1.0, 
@@ -28,7 +28,7 @@ class Exposure(BaseTM):
         return np.clip(img * (2 ** self.stops), 0, 1) ** self.gamma
 
 
-class PercentileExposure(BaseTM):
+class PercentileExposure(BaseToneMapper):
     def __init__(self, 
                  gamma: float=2.0, 
                  low_perc: float=10, 
@@ -48,7 +48,7 @@ class PercentileExposure(BaseTM):
         return self.map_range(np.clip(img, low, high)) ** (1 / self.gamma)
 
 
-class Reinhard(BaseTM):
+class Reinhard(BaseToneMapper):
     def __init__(self,
                  intensity: float=-1.0,
                  light_adapt: float=0.8,
@@ -69,7 +69,7 @@ class Reinhard(BaseTM):
         )
 
 
-class Mantiuk(BaseTM):
+class Mantiuk(BaseToneMapper):
     def __init__(self, 
                  saturation: float=1.0, 
                  scale: float=0.75, 
@@ -85,7 +85,7 @@ class Mantiuk(BaseTM):
         )
 
 
-class Drago(BaseTM):
+class Drago(BaseToneMapper):
     def __init__(self, 
                  saturation: float=1.0, 
                  bias: float=0.85, 
@@ -101,7 +101,7 @@ class Drago(BaseTM):
         )
 
 
-class Durand(BaseTM):
+class Durand(BaseToneMapper):
     def __init__(
         self,
         gamma: float=2.,
