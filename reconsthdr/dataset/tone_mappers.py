@@ -114,7 +114,7 @@ class Durand(BaseToneMapper):
         )
 
 
-TMO_DICT = {
+TM_DICT = {
     "Exposure": Exposure,
     "PercentileExposure": PercentileExposure,
     "Reinhard": Reinhard,
@@ -125,8 +125,6 @@ TMO_DICT = {
 
 
 if __name__ == "__main__":
-    from pathlib import Path
-
     from PIL import Image
 
     hdr_file = "tests/data/brown_photostudio_02_0.5k.hdr"
@@ -136,6 +134,6 @@ if __name__ == "__main__":
         cv2.COLOR_BGR2RGB
         )
 
-    for tm_name, tm in TMO_DICT.items():
+    for tm_name, tm in TM_DICT.items():
         ldr_img = tm(randomize=False)(hdr_img)
         Image.fromarray((255 * ldr_img).astype(np.uint8)).save(f"ldr_{tm_name}.png")
