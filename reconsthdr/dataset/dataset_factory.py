@@ -46,11 +46,13 @@ class DatasetFactory:
     def _extract_valid_samples(self, folder_name: str) -> List[DataSample]:
         hdr_folder = Env().data_dir / folder_name / Env().hdr_dir
         ldr_folder = Env().data_dir / folder_name / Env().ldr_dir
-        hdr_files = list(hdr_folder.glob("*"))
-        valid_samples = []
+        hdr_files = list(hdr_folder.glob("*.hdr"))
+        valid_samples: List[DataSample] = []
         for hdr_file in hdr_files:
             ldr_file = ldr_folder / f"{hdr_file.stem}.png"
-            points_file = ldr_folder / f"{hdr_file.stem}.json" if (ldr_folder / f"{hdr_file.stem}.json").exists() else None
-            valid_samples.append(DataSample(img_file=hdr_file, points_file=points_file))
+            if not ldr_file.exists():
+                logger.warning(f"hdr file {hdr_file} does not exist")
+                continue
+            valid_samples.append(DataSample(hdr_file, ldr_file))
         print('num samples:', len(valid_samples))
         return valid_samples

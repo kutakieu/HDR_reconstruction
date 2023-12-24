@@ -6,8 +6,8 @@ from torch.utils.data import DataLoader, Dataset
 
 @dataclass
 class DataSample:
-    img: Path
-    corner: Path
+    hdr_file: Path
+    ldr_file: Path
 
 
 class BaseDataset(Dataset):
