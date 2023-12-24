@@ -1,10 +1,18 @@
 dataset:
+    sources:
+        PolyHeven:
+            folder_name: "PolyHaven"
+            train: 0.7
+            val: 0.1
+            test: 0.2
     train:
         mode: "train"
-        img_size: [512, 512]
+        img_size: [256, 256]
         aug:
+            crop: True
             flip: True
             rotate: True
+            color_jitter: True
         loader_args:
             batch_size: 4
             num_workers: &num_workers 4
@@ -15,8 +23,10 @@ dataset:
         mode: "test"
         img_size: [1024, 512]
         aug:
+            crop: False
             flip: False
             rotate: False
+            color_jitter: False
         loader_args:
             batch_size: 1
             num_workers: *num_workers
@@ -27,8 +37,10 @@ dataset:
         mode: "test"
         img_size: [1024, 512]
         aug:
+            crop: False
             flip: False
             rotate: False
+            color_jitter: False
         loader_args:
             batch_size: 1
             num_workers: *num_workers
@@ -37,6 +49,7 @@ dataset:
             pin_memory: True
 model:
     name: "expandnet"
+    lossfn: "scale_invariant_mse"
 training:
     n_epochs: 300
     accelerator:
