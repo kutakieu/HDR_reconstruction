@@ -7,7 +7,7 @@ from omegaconf import DictConfig, OmegaConf
 
 from reconsthdr import Env
 from reconsthdr.dataset.dataset_factory import DatasetFactory
-from reconsthdr.lightning_wrapper import LightningWrapper
+from reconsthdr.lightning_wrapper import LightningHdrEstimator
 
 
 @hydra.main(
@@ -21,7 +21,7 @@ def main(cfg: DictConfig):
     val_dataloader = dataset_factory.create_dataset("val").create_dataloader()
     test_dataloader = dataset_factory.create_dataset("test").create_dataloader()
 
-    hdr_estimator = LightningWrapper(cfg)
+    hdr_estimator = LightningHdrEstimator(cfg)
 
     early_stop_callback = EarlyStopping(
         monitor="loss_val",

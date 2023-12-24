@@ -12,7 +12,7 @@ from reconsthdr.utils.logger import get_logger
 logger = get_logger(__name__)
 
 
-class LightningWrapper(pl.LightningModule):
+class LightningHdrEstimator(pl.LightningModule):
     def __init__(self, cfg) -> None:
         super().__init__()
         self.net = model_factory(cfg)
@@ -65,8 +65,8 @@ class LightningWrapper(pl.LightningModule):
         gt_hdr, ldr = batch
         pred_hdr = self.net(ldr)
         loss = self.loss_fn(pred_hdr, gt_hdr)
-        self.test_step_outputs.append({"loss": loss["total"].detach().cpu().numpy()})
-        return loss["total"]
+        self.test_step_outputs.append({"loss": loss.detach().cpu().numpy()})
+        return loss
 
     # override
     def on_test_epoch_end(self) -> None:
