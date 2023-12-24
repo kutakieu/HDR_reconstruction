@@ -3,7 +3,7 @@ from .expandnet import ExpandNet, ExpandNetLoss
 
 def model_factory(cfg):
     if cfg.model.name == "expandnet":
-        return ExpandNet(**cfg.expandnet)
+        return ExpandNet()
     else:
         raise NotImplementedError
 

@@ -87,7 +87,7 @@ class Fusion(nn.Module):
         self.end_net = nn.Sequential(
             Block(dim*4, dim, 1, 1, 0), 
             nn.Conv2d(dim, 3, 1, 1, 0), 
-            nn.Sigmoid()
+            nn.ReLU()
         )
     
     def forward(self, x):
@@ -103,3 +103,10 @@ class ExpandNetLoss(nn.Module):
     def forward(self, pred, gt):
         cosine_term = (1 - self.similarity(pred, gt)).mean()
         return self.l1_loss(pred, gt) + self.loss_lambda * cosine_term
+
+
+if __name__ == "__main__":
+    net = ExpandNet()
+    x = torch.randn(1, 3, 512, 512)
+    y = net(x)
+    print(y.shape)
