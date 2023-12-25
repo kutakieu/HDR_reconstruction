@@ -13,9 +13,13 @@ def calibrate_hdr(hdr: np.ndarray, ldr: np.ndarray):
     Returns:
         np.ndarray: calibrated HDR image
     """
-    non_overexposed_mask = _get_non_overexposed_mask(ldr)
-    sum_ldr_non_overexposed = np.sum(ldr[non_overexposed_mask, :])
-    sum_hdr_non_overexposed = np.sum(hdr[non_overexposed_mask, :])
+    if hdr.shape[:2] != ldr.shape[:2]:
+        smaller_shape = np.min([hdr.shape[:2], ldr.shape[:2]], axis=0)
+        hdr_resized = cv2.resize(hdr, (smaller_shape[1], smaller_shape[0]))
+        ldr_resized = cv2.resize(ldr, (smaller_shape[1], smaller_shape[0]))
+    non_overexposed_mask = _get_non_overexposed_mask(ldr_resized)
+    sum_ldr_non_overexposed = np.sum(ldr_resized[non_overexposed_mask, :])
+    sum_hdr_non_overexposed = np.sum(hdr_resized[non_overexposed_mask, :])
     if sum_ldr_non_overexposed == 0 or sum_hdr_non_overexposed == 0:
         raise ValueError("HDR calibration failed")
     return hdr * (sum_ldr_non_overexposed / sum_hdr_non_overexposed)
