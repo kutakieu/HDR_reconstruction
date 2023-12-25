@@ -10,7 +10,7 @@ class Env(BaseSettings):
 
     data_dir: Path = Field(default="data")
     hdr_dir: str = Field(default="calibrated_hdr")
-    ldr_dir: str = Field(default="ldr")
+    ldr_dir: str = Field(default="calibrated_ldr")
 
     wandb_api_key: str = Field(default="")
 

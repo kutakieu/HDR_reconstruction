@@ -49,7 +49,7 @@ class DatasetFactory:
         hdr_files = list(hdr_folder.glob("*.hdr"))
         valid_samples: List[DataSample] = []
         for hdr_file in hdr_files:
-            ldr_file = ldr_folder / f"{hdr_file.stem}.png"
+            ldr_file = ldr_folder / f"{hdr_file.stem}.jpg"
             if not ldr_file.exists():
                 logger.warning(f"hdr file {hdr_file} does not exist")
                 continue

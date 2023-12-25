@@ -17,6 +17,9 @@ def calibrate_hdr(hdr: np.ndarray, ldr: np.ndarray):
         smaller_shape = np.min([hdr.shape[:2], ldr.shape[:2]], axis=0)
         hdr_resized = cv2.resize(hdr, (smaller_shape[1], smaller_shape[0]))
         ldr_resized = cv2.resize(ldr, (smaller_shape[1], smaller_shape[0]))
+    else:
+        hdr_resized, ldr_resized = hdr, ldr
+    
     non_overexposed_mask = _get_non_overexposed_mask(ldr_resized)
     sum_ldr_non_overexposed = np.sum(ldr_resized[non_overexposed_mask, :])
     sum_hdr_non_overexposed = np.sum(hdr_resized[non_overexposed_mask, :])

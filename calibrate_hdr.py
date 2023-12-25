@@ -28,7 +28,10 @@ def main(args):
     hdr_out_dir = Path(args.hdr_out_dir)
     for hdr_file in hdr_in_dir.glob("*.hdr"):
         hdr_file_id = f"{'_'.join(hdr_file.stem.split('_')[:-1])}"  # input hdr_file name example: abandoned_factory_canteen_01_2k.hdr
-        ldr_file = ldr_in_dir / f"{hdr_file_id}.png"
+        ldr_file = ldr_in_dir / f"{hdr_file_id}.jpg"
+        if not ldr_file.exists():
+            print(ldr_file)
+            continue
         hdr_img = load_hdr(hdr_file)
         ldr_img = np.array(Image.open(ldr_file))
 
