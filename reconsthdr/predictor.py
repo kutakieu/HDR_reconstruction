@@ -35,4 +35,4 @@ class Predictor:
         ldr = self.img_transform(ldr)
         with torch.no_grad():
             ldr = ldr.unsqueeze(0).to(self.device)
-            return self.net(ldr).cpu().permute(0, 2, 3, 1).numpy()[0]
+            return np.exp(self.net(ldr).cpu().permute(0, 2, 3, 1).numpy()[0])
