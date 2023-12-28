@@ -1,3 +1,8 @@
+lightning_logs
+outputs
+expandnet
+wandb
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
