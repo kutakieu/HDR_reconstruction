@@ -58,7 +58,7 @@ def rendering_setting(
     scene.cycles.use_adaptive_sampling = True
     scene.cycles.use_adaptive_threshold = 0.01
     scene.cycles.samples = 10
-    NUM_BOUCES = 1
+    NUM_BOUCES = 3
     scene.cycles.max_bounces = NUM_BOUCES
     scene.cycles.diffuse_bounces = NUM_BOUCES
     scene.cycles.glossy_bounces = NUM_BOUCES
@@ -133,7 +133,7 @@ def make_shadow_catcher_material(mat_name: str = "shadow_catcher_material") -> b
     clean_nodes(shadow_catcher_material_nodes)
     output_material_node_room = shadow_catcher_material_nodes.new(type="ShaderNodeOutputMaterial")
     bsdf_diffuse_node_room = shadow_catcher_material_nodes.new(type="ShaderNodeBsdfDiffuse")
-    bsdf_diffuse_node_room.inputs[0].default_value = [0.7, 0.7, 0.7, 1.0]
+    bsdf_diffuse_node_room.inputs[0].default_value = [0.7, 0.7, 0.5, 1.0]
     shadow_catcher_material_links.new(bsdf_diffuse_node_room.outputs["BSDF"], output_material_node_room.inputs["Surface"])
     return shadow_catcher_material
 
