@@ -32,7 +32,7 @@ class PanoHdrDataset(BaseDataset):
 
     def __getitem__(self, idx: int) -> Tuple[np.ndarray, np.ndarray]:
         data_sample = self.data_samples[idx]
-        hdr_img = load_hdr(data_sample.hdr_file)
+        hdr_img = np.log(load_hdr(data_sample.hdr_file) + 1e-6)
         ldr_img = np.array(Image.open(data_sample.ldr_file))
         hdr_img, ldr_img = self.augment(hdr_img, ldr_img)
         if hdr_img.shape[:2] != self.img_size[::-1]:

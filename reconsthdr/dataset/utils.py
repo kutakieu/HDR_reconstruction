@@ -5,7 +5,4 @@ import cv2
 
 
 def load_hdr(img_file: Union[str, Path]):
-    return cv2.cvtColor(
-        cv2.imread(str(img_file), flags=cv2.IMREAD_ANYDEPTH + cv2.IMREAD_COLOR), 
-        cv2.COLOR_BGR2RGB
-        )
+    return cv2.imread(str(img_file), flags=cv2.IMREAD_ANYDEPTH + cv2.IMREAD_COLOR)
