@@ -9,12 +9,13 @@ dataset:
         mode: "train"
         img_size: [256, 256]
         aug:
+            scale: True
             crop: True
             flip: True
             rotate: True
-            color_jitter: True
+            color_jitter: False
         loader_args:
-            batch_size: 4
+            batch_size: 16
             num_workers: &num_workers 4
             shuffle: True
             drop_last: True
@@ -23,6 +24,7 @@ dataset:
         mode: "test"
         img_size: [1024, 512]
         aug:
+            scale: False
             crop: False
             flip: False
             rotate: False
@@ -37,6 +39,7 @@ dataset:
         mode: "test"
         img_size: [1024, 512]
         aug:
+            scale: False
             crop: False
             flip: False
             rotate: False
@@ -48,8 +51,8 @@ dataset:
             drop_last: False
             pin_memory: True
 model:
-    name: "expandnet"
-    lossfn: "scale_invariant_mse"
+    name: "hdr_unet"
+    lossfn: "simse+mae"
 training:
     n_epochs: 300
     accelerator:
