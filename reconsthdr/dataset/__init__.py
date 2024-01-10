@@ -11,6 +11,8 @@ class DataSample:
 
 
 class BaseDataset(Dataset):
+    data_samples: list[DataSample]
+    
     def __init__(self, **kwargs):
         self.loader_args = kwargs["loader_args"]
 

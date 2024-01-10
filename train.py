@@ -8,6 +8,7 @@ from omegaconf import DictConfig, OmegaConf
 from reconsthdr import Env
 from reconsthdr.dataset.dataset_factory import DatasetFactory
 from reconsthdr.lightning_wrapper import LightningHdrEstimator
+from reconsthdr.utils.remote_logger import WandbLoggerUtils
 
 
 @hydra.main(
@@ -17,9 +18,9 @@ from reconsthdr.lightning_wrapper import LightningHdrEstimator
 )
 def main(cfg: DictConfig):
     dataset_factory = DatasetFactory(cfg)
-    train_dataloader = dataset_factory.create_dataset("train").create_dataloader()
-    val_dataloader = dataset_factory.create_dataset("val").create_dataloader()
-    test_dataloader = dataset_factory.create_dataset("test").create_dataloader()
+    train_dataset = dataset_factory.create_dataset("train")
+    val_dataset = dataset_factory.create_dataset("val")
+    test_dataset = dataset_factory.create_dataset("test")
 
     hdr_estimator = LightningHdrEstimator(cfg)
 
@@ -37,6 +38,11 @@ def main(cfg: DictConfig):
             project=cfg.model.name, 
             config=OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True)
             )
+        wandb_logger_utils = WandbLoggerUtils(wandb_logger)
+        wandb_logger_utils.log_data_split(train_dataset.data_samples, "train")
+        wandb_logger_utils.log_data_split(val_dataset.data_samples, "val")
+        wandb_logger_utils.log_data_split(test_dataset.data_samples, "test")
+
 
     trainer = pl.Trainer(
         accelerator=cfg.training.accelerator.device,
@@ -50,11 +56,11 @@ def main(cfg: DictConfig):
 
     trainer.fit(
         model=hdr_estimator,
-        train_dataloaders=train_dataloader,
-        val_dataloaders=val_dataloader,
+        train_dataloaders=train_dataset.create_dataloader(),
+        val_dataloaders=val_dataset.create_dataloader(),
     )
 
-    trainer.test(model=hdr_estimator, dataloaders=test_dataloader)
+    trainer.test(model=hdr_estimator, dataloaders=test_dataset.create_dataloader())
 
 
 if __name__ == "__main__":
