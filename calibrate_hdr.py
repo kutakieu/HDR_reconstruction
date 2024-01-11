@@ -24,8 +24,10 @@ def get_args():
 def main(args):
     hdr_in_dir = Path(args.hdr_in_dir)
     ldr_in_dir = Path(args.ldr_in_dir)
-    ldr_out_dir = Path(args.ldr_out_dir)  
+    ldr_out_dir = Path(args.ldr_out_dir)
     hdr_out_dir = Path(args.hdr_out_dir)
+    ldr_out_dir.mkdir(parents=True, exist_ok=True)
+    hdr_out_dir.mkdir(parents=True, exist_ok=True)
     for hdr_file in hdr_in_dir.glob("*.hdr"):
         hdr_file_id = f"{'_'.join(hdr_file.stem.split('_')[:-1])}"  # input hdr_file name example: abandoned_factory_canteen_01_2k.hdr
         ldr_file = ldr_in_dir / f"{hdr_file_id}.jpg"
