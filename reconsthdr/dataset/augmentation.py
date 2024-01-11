@@ -4,14 +4,16 @@ from typing import Optional, Tuple
 import cv2
 import numpy as np
 
+from .e2p import e2p_with_map, generate_e2p_map
+
 
 def random_scale(img: np.ndarray, img2: Optional[np.ndarray]):
     scale = uniform(0.5, 2)
     h, w = img.shape[:2]
     if img2 is None:
-        return cv2.resize(img, (w*scale, h*scale))
+        return cv2.resize(img, (int(w*scale), int(h*scale)))
     h2, w2 = img2.shape[:2]
-    return cv2.resize(img, (w*scale, h*scale)), cv2.resize(img2, (w2*scale, h2*scale))
+    return cv2.resize(img, (int(w*scale), int(h*scale))), cv2.resize(img2, (int(w2*scale), int(h2*scale)))
 
 
 def random_crop(img: np.ndarray, img2: Optional[np.ndarray], crop_hw: Tuple[int, int]):
@@ -30,14 +32,14 @@ def random_crop(img: np.ndarray, img2: Optional[np.ndarray], crop_hw: Tuple[int,
     return img[y:y+crop_h, x:x+crop_w, :], img2[y:y+crop_h, x:x+crop_w, :]
     
 
-def random_flip(img: np.ndarray, img2: Optional[np.ndarray]):
+def random_flip(img: np.ndarray, img2: Optional[np.ndarray], force=False):
     """Flip panorama image horizontally
     Args:
         img (np.ndarray): input image
     Returns:
         np.ndarray: horizontally flipped image
     """
-    if random() < 0.5:
+    if random() < 0.5 or force:
         if img2 is None:
             return np.flip(img, axis=1)
         return np.flip(img, axis=1), np.flip(img2, axis=1)
