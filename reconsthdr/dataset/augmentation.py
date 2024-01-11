@@ -78,3 +78,15 @@ def apply_hue_jitter(img: np.ndarray, img2: Optional[np.ndarray], hue_jitter: fl
     img2[:,:,0] = (img2[:,:,0] + hue_jitter) % 360.0
     img2 = cv2.cvtColor(img2, cv2.COLOR_HSV2RGB)
     return img, img2
+
+def random_e2p(hdr_img, ldr_img, force=False):
+    if random() < 0.5 or force:
+        e2p_map = generate_e2p_map(
+            in_hw=hdr_img.shape[:2],
+            fov_deg=np.random.randint(60, 90),
+            u_deg=0,
+            v_deg=np.random.randint(-45, 45),
+            out_hw=[hdr_img.shape[1]//4, hdr_img.shape[1]//4],
+        )
+        return e2p_with_map(hdr_img, e2p_map), e2p_with_map(ldr_img, e2p_map)
+    return hdr_img, ldr_img
