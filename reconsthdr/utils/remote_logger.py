@@ -3,9 +3,12 @@ from abc import ABC
 from pathlib import Path
 from typing import List, Literal, Union
 
-import wandb
+import torch
+from lightning import pytorch as pl
 from lightning.pytorch.loggers import WandbLogger
 from omegaconf import OmegaConf
+
+import wandb
 
 from ..dataset import DataSample
 
@@ -42,6 +45,15 @@ class BaseLoggerUtils(ABC):
         data_sample_list_as_str = "\n".join([str(data_sample.hdr_file) for data_sample in data_samples])
         self.log_str_as_file(data_sample_list_as_str, f"{split_type}.csv", "splits")
 
+    def log_model(self, checkpoint_path: Union[str, Path], lightning_model: pl.LightningModule):
+        checkpoint = torch.load(checkpoint_path)
+        lightning_model.load_state_dict(checkpoint['state_dict'])
+
+        with tempfile.TemporaryDirectory() as dname:
+            model_path = Path(dname) / f"{Path(checkpoint_path).stem}.pth"
+            torch.save({"state_dict": lightning_model.net.state_dict()}, model_path)
+            self.log_artifact(model_path, "model", "")
+
 
 class WandbLoggerUtils(BaseLoggerUtils):
     def __init__(self, logger: WandbLogger):
@@ -52,7 +64,7 @@ class WandbLoggerUtils(BaseLoggerUtils):
 
     def log_artifact(self, local_path: Union[str, Path], type: str, description: str) -> None:
         local_path = Path(local_path)
-        artifact = wandb.Artifact(local_path.stem, type=type, description=description)
+        artifact = wandb.Artifact(f"{wandb.run.id}_{local_path.stem}", type=type, description=description)
         if local_path.is_dir():
             artifact.add_dir(local_path)
         else:
