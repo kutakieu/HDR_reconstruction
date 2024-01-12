@@ -4,11 +4,10 @@ from pathlib import Path
 from typing import List, Literal, Union
 
 import torch
+import wandb
 from lightning import pytorch as pl
 from lightning.pytorch.loggers import WandbLogger
 from omegaconf import OmegaConf
-
-import wandb
 
 from ..dataset import DataSample
 

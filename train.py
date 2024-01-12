@@ -1,12 +1,12 @@
 from pathlib import Path
 
 import hydra
+import wandb
 from lightning import pytorch as pl
 from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
 from lightning.pytorch.loggers import WandbLogger
 from omegaconf import DictConfig, OmegaConf
 
-import wandb
 from reconsthdr import Env
 from reconsthdr.dataset.dataset_factory import DatasetFactory
 from reconsthdr.lightning_wrapper import LightningHdrEstimator
