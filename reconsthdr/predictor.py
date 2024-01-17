@@ -6,7 +6,6 @@ import torch
 from omegaconf import DictConfig, OmegaConf
 from torchvision.transforms.v2 import Compose, Normalize, ToTensor
 
-from reconsthdr.lightning_wrapper import LightningHdrEstimator
 from reconsthdr.models import model_factory
 
 
@@ -18,6 +17,7 @@ class Predictor:
         self.net = model_factory(cfg)
         self.net.to(self.device)
         if Path(weight_file).suffix == ".ckpt":
+            from reconsthdr.lightning_wrapper import LightningHdrEstimator
             checkpoint = torch.load(weight_file)
             lightning_model = LightningHdrEstimator(cfg)
             lightning_model.load_state_dict(checkpoint['state_dict'])
