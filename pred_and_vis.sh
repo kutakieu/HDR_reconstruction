@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# This script is for generating hdr image from ldr image and rendering the scene with the generated hdr image.
+# usage: ./pred_and_vis.sh ./test_data/test_img.jpg ./results
+#   outputs:
+#       ./results/test_img.hdr
+#       ./results/rendered_test_img.png
+#       ./results/final_test_img.png
+
 INPUT_LDR_IMG_FILE=$1
 SAVE_DIR=$2
 
