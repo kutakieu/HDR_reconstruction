@@ -6,6 +6,7 @@ import torch
 from omegaconf import DictConfig, OmegaConf
 from torchvision.transforms.v2 import Compose, Normalize, ToTensor
 
+from reconsthdr.dataset.tone_mappers import calibrate_hdr
 from reconsthdr.models import model_factory
 
 
@@ -32,7 +33,8 @@ class Predictor:
         ])
 
     def __call__(self, ldr: np.ndarray) -> np.ndarray:
-        ldr = self.img_transform(ldr)
+        ldr_tensor = self.img_transform(ldr)
         with torch.no_grad():
-            ldr = ldr.unsqueeze(0).to(self.device)
-            return np.exp(self.net(ldr).cpu().permute(0, 2, 3, 1).numpy()[0])
+            ldr_tensor = ldr_tensor.unsqueeze(0).to(self.device)
+            hdr = np.exp(self.net(ldr_tensor).cpu().permute(0, 2, 3, 1).numpy()[0])
+            return calibrate_hdr(hdr, ldr)

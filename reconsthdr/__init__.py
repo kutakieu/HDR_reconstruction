@@ -9,8 +9,8 @@ class Env(BaseSettings):
     config_name: str = Field(default="config.yaml")
 
     data_dir: Path = Field(default="data")
-    hdr_dir: str = Field(default="calibrated_hdr")
-    ldr_dir: str = Field(default="calibrated_ldr")
+    hdr_dir: str = Field(default="calibrated_hdrs")
+    ldr_dir: str = Field(default="calibrated_ldrs")
 
     wandb_api_key: str = Field(default="")
 

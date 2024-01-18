@@ -13,6 +13,7 @@ dataset:
             crop: True
             flip: True
             rotate: True
+            e2p: True
             color_jitter: False
         loader_args:
             batch_size: 16
@@ -28,6 +29,7 @@ dataset:
             crop: False
             flip: False
             rotate: False
+            e2p: False
             color_jitter: False
         loader_args:
             batch_size: 1
@@ -43,6 +45,7 @@ dataset:
             crop: False
             flip: False
             rotate: False
+            e2p: False
             color_jitter: False
         loader_args:
             batch_size: 1

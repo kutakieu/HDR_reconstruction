@@ -7,8 +7,8 @@ from torch import Tensor
 from torchvision.transforms.v2 import Compose, Normalize, ToTensor
 
 from . import BaseDataset, DataSample
-from .augmentation import (apply_hue_jitter, random_crop, random_flip,
-                           random_rotate)
+from .augmentation import (apply_hue_jitter, random_crop, random_e2p,
+                           random_flip, random_rotate)
 from .utils import load_hdr
 
 
@@ -19,6 +19,7 @@ class PanoHdrDataset(BaseDataset):
         self.flip = kwargs.get("flip", False)
         self.rotate = kwargs.get("rotate", False)
         self.color_jitter = kwargs.get("color_jitter", False)
+        self.e2p = kwargs.get("e2p", False)
         self.img_size = kwargs.get("img_size", [1024, 512])
         self.data_samples = data_samples
 
@@ -45,6 +46,8 @@ class PanoHdrDataset(BaseDataset):
             hdr_img, ldr_img = random_flip(hdr_img, ldr_img)
         if self.rotate:
             hdr_img, ldr_img = random_rotate(hdr_img, ldr_img)
+        if self.e2p:
+            hdr_img, ldr_img = random_e2p(hdr_img, ldr_img)
         if self.crop:
             hdr_img, ldr_img = random_crop(hdr_img, ldr_img, self.img_size[::-1])
         if self.color_jitter:
