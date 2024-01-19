@@ -22,16 +22,28 @@ def calibrate_hdr(hdr: np.ndarray, ldr: np.ndarray):
         ldr_resized = cv2.resize(ldr, (smaller_shape[1], smaller_shape[0]))
     else:
         hdr_resized, ldr_resized = hdr, ldr
+
+    ldr_linear_rgb = sRGB2linearRGB(ldr_resized)
     
-    non_overexposed_mask = _get_non_overexposed_mask(ldr_resized)
-    sum_ldr_non_overexposed = np.sum(ldr_resized[non_overexposed_mask, :])
+    non_overexposed_mask = _get_non_overexposed_mask(ldr_linear_rgb)
+    sum_ldr_non_overexposed = np.sum(ldr_linear_rgb[non_overexposed_mask, :])
     sum_hdr_non_overexposed = np.sum(hdr_resized[non_overexposed_mask, :])
     if sum_ldr_non_overexposed == 0 or sum_hdr_non_overexposed == 0:
         raise ValueError("HDR calibration failed")
-    return hdr * (sum_ldr_non_overexposed / sum_hdr_non_overexposed)
+    return hdr * (sum_ldr_non_overexposed / sum_hdr_non_overexposed), ldr_linear_rgb
 
 def _get_non_overexposed_mask(ldr: np.ndarray, tau: float=0.83):
     return np.sum(ldr, axis=2) < tau*3
+
+def sRGB2linearRGB(img: np.ndarray):
+    if np.max(img) > 1:
+        img = img / 255.0
+    return np.where(img <= 0.04045, img / 12.92, np.power((img+0.055) / 1.055, 2.4))
+
+def linearRGB2sRGB(img: np.ndarray):
+    img = np.where(img <= 0.0031308, img * 12.92,
+                   np.power(img, 1/2.4) * 1.055 - 0.055)
+    return img * 255
 
 class BaseToneMapper(ABC):
     def __call__(self, img):
