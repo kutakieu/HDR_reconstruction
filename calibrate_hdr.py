@@ -38,10 +38,10 @@ def main(args):
         ldr_img = np.array(Image.open(ldr_file))
 
         hdr_img, ldr_img = match_hdr_ldr_size(hdr_img, ldr_img)
-        calibrated_hdr = calibrate_hdr(hdr_img, ldr_img)
+        calibrated_hdr, calibrated_ldr = calibrate_hdr(hdr_img, ldr_img)
         
         cv2.imwrite(str(hdr_out_dir / f"{hdr_file_id}.hdr"), calibrated_hdr)
-        Image.fromarray(ldr_img).save(ldr_out_dir / ldr_file.name)
+        cv2.imwrite(str(ldr_out_dir / f"{hdr_file_id}.hdr"), calibrated_ldr)
 
 def match_hdr_ldr_size(hdr: np.ndarray, ldr: np.ndarray):
     if hdr.shape[:2] != ldr.shape[:2]:
