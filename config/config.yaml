@@ -3,20 +3,20 @@ dataset:
         PolyHeven:
             folder_name: "PolyHaven"
             train: 0.7
-            val: 0.1
-            test: 0.2
+            val: 0.25
+            test: 0.05
     train:
         mode: "train"
-        img_size: [256, 256]
+        img_size: [512, 256]
         aug:
-            scale: True
-            crop: True
+            scale: False
+            crop: False
             flip: True
             rotate: True
-            e2p: True
+            e2p: False
             color_jitter: False
         loader_args:
-            batch_size: 16
+            batch_size: 4
             num_workers: &num_workers 4
             shuffle: True
             drop_last: True
@@ -55,7 +55,7 @@ dataset:
             pin_memory: True
 model:
     name: "hdr_unet"
-    lossfn: "simse+mae"
+    lossfn: "mse"
 training:
     n_epochs: 300
     accelerator:
@@ -63,7 +63,7 @@ training:
         gpus: 1
     optimizer:
         name: "adam"
-        learning_rate: 0.0003
+        learning_rate: 0.001
     log_every_n_batch: 5
     early_stopping_patience: 50
 
