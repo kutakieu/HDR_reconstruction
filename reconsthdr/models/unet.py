@@ -24,7 +24,6 @@ class Unet(nn.Module):
         self.last_layer = nn.Sequential(
             nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
             nn.Conv2d(64, 3, kernel_size=1, stride=1, padding=0),
-            nn.ReLU(inplace=True),
         )
     
     def forward(self, x: torch.Tensor):
