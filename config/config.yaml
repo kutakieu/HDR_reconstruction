@@ -1,6 +1,6 @@
 dataset:
     sources:
-        PolyHeven:
+        PolyHaven:
             folder_name: "PolyHaven"
             train: 0.7
             val: 0.25
