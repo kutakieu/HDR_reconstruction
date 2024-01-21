@@ -4,7 +4,8 @@ import cv2
 import numpy as np
 from torch import Tensor
 
-from ..utils import load_hdr
+from ..utils import load_rgb_hdr, load_rgb_ldr
+from ..utils.hdr_calibration import sRGB2linearRGB
 from . import BaseDataset, DataSample
 from .augmentation import (apply_hue_jitter, random_crop, random_e2p,
                            random_flip, random_rotate)
@@ -29,8 +30,8 @@ class PanoHdrDataset(BaseDataset):
 
     def __getitem__(self, idx: int) -> Tuple[np.ndarray, np.ndarray]:
         data_sample = self.data_samples[idx]
-        hdr_img = np.log(load_hdr(data_sample.hdr_file) + 1e-6)
-        ldr_img = load_hdr(data_sample.ldr_file)
+        hdr_img = np.log(load_rgb_hdr(data_sample.hdr_file) + 1e-6)
+        ldr_img = sRGB2linearRGB(load_rgb_ldr(str(data_sample.ldr_file)))
         hdr_img, ldr_img = self.augment(hdr_img, ldr_img)
         if hdr_img.shape[:2] != self.img_size[::-1]:
             hdr_img = cv2.resize(hdr_img, self.img_size)
