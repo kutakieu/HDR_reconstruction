@@ -1,3 +1,4 @@
+import sys
 from math import pi
 from pathlib import Path
 from typing import Union
@@ -6,10 +7,14 @@ import bpy
 
 
 def main():
+    input_hdr_file = Path(sys.argv[-1])
+    if not input_hdr_file.exists():
+        raise FileNotFoundError(input_hdr_file)
+    output_filepath = input_hdr_file.parent / f"rendered_{input_hdr_file.stem}.png"
     clean_objects()
     set_camera_object()
-    setup_world(Path("data/brown_photostudio_02_4k.hdr"))
-    rendering_setting(Path("output.png"))
+    setup_world(input_hdr_file)
+    rendering_setting(output_filepath)
     make_global_shadow_catcher_plane()
     make_spheres()
     bpy.ops.render.render(animation=False, write_still=True)
@@ -49,7 +54,7 @@ def rendering_setting(
     scene.render.image_settings.color_mode = "RGBA"
     scene.render.filepath = str(save_path)
     scene.render.resolution_x = 1024
-    scene.render.resolution_y = 512
+    scene.render.resolution_y = 256
     scene.render.resolution_percentage = 100
     scene.render.engine = "CYCLES"
     scene.view_settings.view_transform = "Standard"  # Standard is sRGB (default is Filmic) reference: https://blender.stackexchange.com/questions/183699/the-color-of-my-video-is-wrong-when-i-input-it-into-composition

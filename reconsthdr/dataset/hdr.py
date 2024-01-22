@@ -6,10 +6,10 @@ from PIL import Image
 from torch import Tensor
 from torchvision.transforms.v2 import Compose, Normalize, ToTensor
 
+from ..utils import load_hdr
 from . import BaseDataset, DataSample
 from .augmentation import (apply_hue_jitter, random_crop, random_e2p,
                            random_flip, random_rotate)
-from .utils import load_hdr
 
 
 class PanoHdrDataset(BaseDataset):

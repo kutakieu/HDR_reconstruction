@@ -10,7 +10,7 @@ import numpy as np
 from PIL import Image
 
 from reconsthdr.dataset.tone_mappers import calibrate_hdr
-from reconsthdr.dataset.utils import load_hdr
+from reconsthdr.utils import load_hdr
 
 
 def get_args():

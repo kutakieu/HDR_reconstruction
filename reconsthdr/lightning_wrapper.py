@@ -1,8 +1,8 @@
 from typing import Dict
 
 import numpy as np
-from torch import Tensor
 from lightning import pytorch as pl
+from torch import Tensor
 
 from reconsthdr.lossfn_optimizer import (loss_function_factory,
                                          optimizer_factory)
