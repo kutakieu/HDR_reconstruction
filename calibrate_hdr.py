@@ -5,12 +5,9 @@ Calibrate HDRIs with LDRIs by following the procedure in the paper 'Luminance At
 from argparse import ArgumentParser
 from pathlib import Path
 
-import cv2
-import numpy as np
-from PIL import Image
-
-from reconsthdr.dataset.tone_mappers import calibrate_hdr
-from reconsthdr.utils import load_hdr
+from reconsthdr.utils import (load_rgb_hdr, load_rgb_ldr, match_image_size,
+                              save_hdr, save_ldr)
+from reconsthdr.utils.hdr_calibration import calibrate_hdr
 
 
 def get_args():
@@ -34,22 +31,14 @@ def main(args):
         if not ldr_file.exists():
             print(ldr_file)
             continue
-        hdr_img = load_hdr(hdr_file)
-        ldr_img = np.array(Image.open(ldr_file))
+        hdr_img = load_rgb_hdr(hdr_file)
+        ldr_img = load_rgb_ldr(ldr_file)
 
-        hdr_img, ldr_img = match_hdr_ldr_size(hdr_img, ldr_img)
+        hdr_img, ldr_img = match_image_size(hdr_img, ldr_img)
         calibrated_hdr = calibrate_hdr(hdr_img, ldr_img)
         
-        cv2.imwrite(str(hdr_out_dir / f"{hdr_file_id}.hdr"), calibrated_hdr)
-        Image.fromarray(ldr_img).save(ldr_out_dir / ldr_file.name)
-
-def match_hdr_ldr_size(hdr: np.ndarray, ldr: np.ndarray):
-    if hdr.shape[:2] != ldr.shape[:2]:
-        smaller_shape = np.min([hdr.shape[:2], ldr.shape[:2]], axis=0)
-        hdr_resized = cv2.resize(hdr, (smaller_shape[1], smaller_shape[0]))
-        ldr_resized = cv2.resize(ldr, (smaller_shape[1], smaller_shape[0]))
-        return hdr_resized, ldr_resized
-    return hdr, ldr
+        save_hdr(str(hdr_out_dir / f"{hdr_file_id}.hdr"), calibrated_hdr)
+        save_ldr(str(ldr_out_dir / f"{hdr_file_id}.jpg"), ldr_img)
 
 
 if __name__ == "__main__":

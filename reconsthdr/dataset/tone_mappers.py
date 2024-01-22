@@ -5,34 +5,6 @@ import numpy as np
 from numpy.random import uniform
 
 
-def calibrate_hdr(hdr: np.ndarray, ldr: np.ndarray):
-    """Calibrate HDR image using LDR image
-    Args:
-        hdr (np.ndarray): HDR image
-        ldr (np.ndarray): LDR image
-    Returns:
-        np.ndarray: calibrated HDR image
-    """
-    if np.max(ldr) > 1:
-        ldr = ldr / 255.0
-
-    if hdr.shape[:2] != ldr.shape[:2]:
-        smaller_shape = np.min([hdr.shape[:2], ldr.shape[:2]], axis=0)
-        hdr_resized = cv2.resize(hdr, (smaller_shape[1], smaller_shape[0]))
-        ldr_resized = cv2.resize(ldr, (smaller_shape[1], smaller_shape[0]))
-    else:
-        hdr_resized, ldr_resized = hdr, ldr
-    
-    non_overexposed_mask = _get_non_overexposed_mask(ldr_resized)
-    sum_ldr_non_overexposed = np.sum(ldr_resized[non_overexposed_mask, :])
-    sum_hdr_non_overexposed = np.sum(hdr_resized[non_overexposed_mask, :])
-    if sum_ldr_non_overexposed == 0 or sum_hdr_non_overexposed == 0:
-        raise ValueError("HDR calibration failed")
-    return hdr * (sum_ldr_non_overexposed / sum_hdr_non_overexposed)
-
-def _get_non_overexposed_mask(ldr: np.ndarray, tau: float=0.83):
-    return np.sum(ldr, axis=2) < tau*3
-
 class BaseToneMapper(ABC):
     def __call__(self, img):
         return self.map_range(self.tonemapper.process(img))
@@ -170,10 +142,6 @@ if __name__ == "__main__":
         randomize=False,
     )(hdr_img)
     
-    calibrated_hdr = calibrate_hdr(hdr_img, ldr_img)
-    calibrate_ldr = Reinhard(randomize=False)(calibrated_hdr)
-    Image.fromarray((255 * calibrate_ldr).astype(np.uint8)).save("ldr_calibrated.png")
-
     # for tm_name, tm in TM_DICT.items():
     #     ldr_img = tm(randomize=False)(hdr_img)
     #     Image.fromarray((255 * ldr_img).astype(np.uint8)).save(f"ldr_{tm_name}.png")
