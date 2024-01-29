@@ -17,6 +17,8 @@ def loss_function_factory(loss_function_name: str):
         return scale_invariant_mse_loss
     elif loss_function_name == "simse+mae":
         return simse_and_mae_loss
+    elif loss_function_name == "mse":
+        return mse_loss
 
 def scale_invariant_mse_loss(pred, gt):
     """Scale invariant MSE loss
@@ -33,3 +35,6 @@ def simse_and_mae_loss(pred, gt):
     simse_loss = scale_invariant_mse_loss(pred, gt)
     mae_loss = torch.mean(torch.abs(pred - gt))
     return simse_loss + mae_loss
+
+def mse_loss(pred, gt):
+    return torch.mean((pred - gt) ** 2)
