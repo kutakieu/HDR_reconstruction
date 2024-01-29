@@ -87,7 +87,6 @@ class Fusion(nn.Module):
         self.end_net = nn.Sequential(
             Block(dim*4, dim, 1, 1, 0), 
             nn.Conv2d(dim, 3, 1, 1, 0), 
-            nn.ReLU(inplace=True)
         )
     
     def forward(self, x):
