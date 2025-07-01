@@ -28,7 +28,7 @@ $ poetry run python train.py
 $ poetry run python predict.py --i <input_image_path> --output <output_image_path>
 ```
 
-### Generate HDR image and render the scene with Blender (create rendered image listed above)
+### Render the scene with Blender (create rendered image listed above)
 ```
 $ ./pred_and_vis.sh <input_image_path> <output_dir> <weight_file>
 ```
