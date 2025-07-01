@@ -1,10 +1,12 @@
 # HDR_reconstruction
 Convert a single regular LDR image to HDR image which can be used as an environment map for rendering.
 
-<img src="./data/sample/final_christmas_photo_studio_07.png" width="300" alt="Christmas Photo Studio">
-<img src="./data/sample/final_lookout.png" width="300" alt="Lookout">
-<img src="./data/sample/final_preller_drive.png" width="300" alt="Preller Drive">
-<img src="./data/sample/final_storeroom.png" width="300" alt="Yoga Room">
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 800px;">
+  <img src="./data/sample/final_christmas_photo_studio_07.png" width="100%" alt="Christmas Photo Studio">
+  <img src="./data/sample/final_lookout.png" width="100%" alt="Lookout">
+  <img src="./data/sample/final_preller_drive.png" width="100%" alt="Preller Drive">
+  <img src="./data/sample/final_storeroom.png" width="100%" alt="Yoga Room">
+</div>
 
 ## Installation
 ```
