@@ -9,6 +9,7 @@
 
 INPUT_LDR_IMG_FILE=$1
 SAVE_DIR=$2
+WEIGHT_FILE=$3
 
 FILENAME_EXT=$(basename $INPUT_LDR_IMG_FILE)
 FILENAME_ONLY="${FILENAME_EXT%.*}"
@@ -18,7 +19,7 @@ RENDERED_RESULT_PATH="$SAVE_DIR/rendered_$FILENAME_ONLY.png"
 FINAL_RESULT_PATH="$SAVE_DIR/final_$FILENAME_ONLY.png"
 
 # generate hdr image
-python predict.py --i $INPUT_LDR_IMG_FILE --save_dir $SAVE_DIR
+python predict.py --i $INPUT_LDR_IMG_FILE --save_dir $SAVE_DIR --weight $WEIGHT_FILE
 
 # render scene with the generated hdr image
 blender --background --python render.py $HDR_SAVE_PATH
@@ -32,3 +33,7 @@ rendered = cv2.imread('$RENDERED_RESULT_PATH')
 concat = np.concatenate((ldr, rendered), axis=0)
 cv2.imwrite('$FINAL_RESULT_PATH', concat)
 "
+
+# remove intermediate files
+rm $HDR_SAVE_PATH
+rm $RENDERED_RESULT_PATH
